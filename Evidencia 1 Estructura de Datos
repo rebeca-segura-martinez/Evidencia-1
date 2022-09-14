@@ -1,0 +1,99 @@
+import datetime
+import time
+
+
+
+import random
+salas = {"1:":250,
+        "2":500,
+        "3":480}
+
+clave_cliente=0
+datos_clientes={}
+datos_reservacion={}
+reservaciones={}
+folio_reservacion = 0
+fecha_actual = datetime.date.today()
+diferencia_dias = 2
+fecha_reservacion_procesada = ""
+
+
+while True:
+    print("Bienvenidos al sistema para la reservacion de renta de espacios coworking")
+
+
+    print("\t [A]Registrar la reservación de una sala")
+
+    print("\t [B] Editar el nombre del evento de una reservación ya hecha")
+
+    print("\t [C]Consultar las reservaciones existentes para una fecha específica")
+
+    print("\t [D]Registrarse como un nuevo cliente")
+
+    print("\t [X] Salir")
+
+
+
+
+    opcion=input("Elije la opcion deseada, oprimiendo la tecla de la letra que corresponda: ")
+
+    if (not opcion.upper() in "ABCDX"):
+            print("Opcion incorrecta, favor de volver a intentarlo")
+
+    if (opcion.upper()== "A"):
+        respuesta = int(input("Ingresar su numero de cliente: "))
+
+        if respuesta in datos_clientes:
+            sala = int(input("¿Que sala requiere? Sala 1: Capacidad 250, Sala 2: Capacidad 500, Sala 3: Capacidad 480: "))
+            cant_invitados = int(input("Favor de ingresar en cantidad numerica, la cantidad de invitados que tendra su evento"))
+            if (sala == 1 and cant_invitados > 250) or (sala == 2 and cant_invitados > 500) or (sala == 3 and cant_invitados > 480): 
+                print("La sala seleccionada tiene un aforo maximo menor a la cantidad de sus invitados, favor de seleccionar otra sala")
+            else:
+                    fecha_reservacion = input("¿Cual seria la fecha en que deseea realizar su reservacion? (DD/MM/AAAA): ")
+                    fecha_reservacion_procesada = datetime.datetime.strptime(fecha_reservacion, "%d/%m/%Y").date()
+                    diferencia_dias=fecha_reservacion_procesada - fecha_actual
+                    if diferencia_dias.days <=2:
+                        print("La reservacion de una sala, tiene que ser por lo minimo 2 dias con anterioridad")
+                    else:
+                        turno_reservacion = input("Favor de seleccionar en que turno (Matutino/Vespertino/Nocturno: ")
+                        folio_reservacion += 1
+                        nombre_evento=input("¿Cual es el nombre de su evento?: ")
+                        reservaciones.update({folio_reservacion:[sala, nombre_evento,fecha_reservacion,turno_reservacion]})
+                        print(f'El folio de su reservacion es {folio_reservacion}')
+        else:
+            print("Para realizar una reservacion es necesario ser cliente registrado, favor de primero hacer su registro")
+
+    if (opcion.upper()== "B"):
+    
+        folio_reservacion = int(input("¿Cual es el numero de folio de su reservacion?: "))
+        recuperado=reservaciones.get(folio_reservacion) 
+        if recuperado == None:
+            print("El numero de folio de reservacion no fue encontrado")
+        else:
+            nuevo_nombre = input("¿Cual sera el nuevo nombre de su evento: ")
+            reservaciones.update({folio_reservacion:[nuevo_nombre]})
+
+    
+    if (opcion.upper()== "C"):
+        print("Reservaciones",reservaciones)
+        fecha_mostrar= input("Ingrese la fecha, de la cual desea ver las reservaciones en existencia (DD/MM/AAAA): ")
+        print("*" * 60)
+        print(f'RESERVACIONES DEL DIA ¨{fecha_mostrar}')
+        for valores in reservaciones.values():
+            if valores[2] == fecha_mostrar:
+                # Accion despues de validar que si existe una fecha
+                print("*" * 60)
+                print("Sala    Nombre   Fecha     Turno")
+                print(valores)
+
+
+    if (opcion.upper()== "D"):
+            nombre_cliente=input("Ingrese su nombre completo: ")
+            clave_cliente+=1
+            datos_clientes[clave_cliente]= nombre_cliente
+            print(f'Su numero de cliente es {clave_cliente}')
+
+
+    if (opcion.upper()== "X"):
+            print("¡Que tenga un bonito dia!")
+            break
